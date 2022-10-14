@@ -99,11 +99,14 @@ export default function MainContent(){
         setSlidePrevDisablin(false)
     }
 
-////// Standard Approch for API CALL_ using axios -Logic    
+////// Standard Approch for API CALL_ using axios -Logic   
+
+const [asset, setAsset] = useState([])
     const getApiResponse= async()=>{
         try {
             const response = await axios.get(`https://bazilmuralidharan.github.io/api/ventinoApiTest.json`)
-            // console.log('respponse, ', response)
+            // console.log('respponse, ', response?.data)
+            setAsset(response?.data)
             // setResonseState(response)
         } catch (error) {
             console.log('error_in_Api', error)
@@ -112,6 +115,7 @@ export default function MainContent(){
     useEffect(()=>{
         getApiResponse()
     },[])  
+
 
 ////   customHook approch same_API_ calll with custom fetch_logic 
     const {apiFirst, apiSecond} = useApiHook()
@@ -137,7 +141,7 @@ export default function MainContent(){
                 </LeftRightIcon>  
                         <PlayListMasterCard/> 
                         <CardContainer>
-                                    {state.map((el,i)=>(
+                                    {/* {state.map((el,i)=>(
                                         <Card 
                                             key={i+el.id}
                                             thumbNailImage ={el.thumbNail}
@@ -146,10 +150,9 @@ export default function MainContent(){
                                             thumbDescription = {el.artistName}
                                         />
 
-                                    ))}
-
-{/*....  Conditionaling rendering appproch while using a Method_1 or Method_2 above Stated ......  */}
-{/* {slidePrevDisabling&&apiFirst.map((el,i)=>(
+                                    ))} */}
+{/* conditional rendering with the JSON_query_match_approchh_ above the any one of the method */}
+{slidePrevDisabling&&asset.map((el,i)=>(
 <Card 
     key={i+el.id}
     thumbNailImage ={el.thumbNail}
@@ -157,9 +160,10 @@ export default function MainContent(){
     avatarArtist = {el.artsitPicThumb}
     thumbDescription = {el.artistName}
 />
-))}
 
-{slideNextDisabling &&apiSecond.map((el,i)=>(
+)).slice(0,8)}
+
+{slideNextDisabling&&asset.map((el,i)=>(
 <Card 
     key={i+el.id}
     thumbNailImage ={el.thumbNail}
@@ -167,7 +171,8 @@ export default function MainContent(){
     avatarArtist = {el.artsitPicThumb}
     thumbDescription = {el.artistName}
 />
-))} */}
+
+)).slice(9,17)}
 
 
                         </CardContainer>
