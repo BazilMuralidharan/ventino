@@ -1,9 +1,12 @@
-import React ,{useState}from "react";
+import React ,{useEffect, useState}from "react";
 import { ApiServiceData } from "../../utils/ApiService";
 import Card from "../reUsableComponent/Card";
 import PlayListMasterCard from "../reUsableComponent/PlaylistMasterCard";
 import styled from "styled-components";
 import ContentAnimation from "./ContentAnimation";
+import axios from "axios";
+
+import { useApiHook } from "../../utils/customHook/ApiConsumeHook";
 
 const MainContentSlideWrap = styled.div`
 `
@@ -34,7 +37,6 @@ const CardContainer = styled.div`
 
 
 export default function MainContent(){
-
     ///// paginating Logic without Api_query_params_paginating_Logic
     const pagePerCont = 8 ; 
     const [splitStart, setSplitStart] = useState(0);
@@ -44,11 +46,10 @@ export default function MainContent(){
     ///// paginating Logic with Api_query_params_paginating_Logic
     ///// withou slicing_indexes_query_have to bbe passed 
     const apiServiceFirst = ApiServiceData.slice(0,8);
-    const apiServiceSecond = ApiServiceData.slice(9,17);
+    const apiServiceSecond = ApiServiceData.slice(9,17); 
     const [state, setState] = useState(apiServiceFirst);
-    const [slidePrevDisabling, setSlidePrevDisablin] = useState(false);
+    const [slidePrevDisabling, setSlidePrevDisablin] = useState(true);
     const [slideNextDisabling, setSlideNextDisablin] = useState(false);
-
 
     const mutate = {
         nextPage:()=>{
@@ -98,6 +99,23 @@ export default function MainContent(){
         setSlidePrevDisablin(false)
     }
 
+////// Standard Approch for API CALL_ using axios -Logic    
+    const getApiResponse= async()=>{
+        try {
+            const response = await axios.get(`https://bazilmuralidharan.github.io/api/ventinoApiTest.json`)
+            // console.log('respponse, ', response)
+            // setResonseState(response)
+        } catch (error) {
+            console.log('error_in_Api', error)
+        }
+    }
+    useEffect(()=>{
+        getApiResponse()
+    },[])  
+
+////   customHook approch same_API_ calll with custom fetch_logic 
+    const {apiFirst, apiSecond} = useApiHook()
+
     return(
 
         <div>
@@ -129,6 +147,29 @@ export default function MainContent(){
                                         />
 
                                     ))}
+
+{/*....  Conditionaling rendering appproch while using a Method_1 or Method_2 above Stated ......  */}
+{/* {slidePrevDisabling&&apiFirst.map((el,i)=>(
+<Card 
+    key={i+el.id}
+    thumbNailImage ={el.thumbNail}
+    thumbName = {el.musicName}
+    avatarArtist = {el.artsitPicThumb}
+    thumbDescription = {el.artistName}
+/>
+))}
+
+{slideNextDisabling &&apiSecond.map((el,i)=>(
+<Card 
+    key={i+el.id}
+    thumbNailImage ={el.thumbNail}
+    thumbName = {el.musicName}
+    avatarArtist = {el.artsitPicThumb}
+    thumbDescription = {el.artistName}
+/>
+))} */}
+
+
                         </CardContainer>
                 <LeftRightIcon onClick={nextButton}>
                     <i className ={slideNextDisabling ? "bi bi-chevron-right disable" : "bi bi-chevron-right"}  style={{fontSize:"60px"}}></i>
